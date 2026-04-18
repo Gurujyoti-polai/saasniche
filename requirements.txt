@@ -1,0 +1,15 @@
+praw
+httpx
+ollama
+openai
+groq
+google-generativeai
+google-genai
+supabase
+sentence-transformers
+hdbscan
+scikit-learn
+fastapi
+uvicorn
+pydantic-settings
+python-dotenv

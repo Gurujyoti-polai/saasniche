@@ -1,0 +1,11 @@
+praw
+httpx
+ollama
+supabase
+sentence-transformers
+hdbscan
+scikit-learn
+fastapi
+uvicorn
+pydantic-settings
+python-dotenv

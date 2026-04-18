@@ -1,0 +1,10 @@
+httpx
+anthropic
+supabase
+sentence-transformers
+hdbscan
+scikit-learn
+fastapi
+uvicorn
+pydantic-settings
+python-dotenv

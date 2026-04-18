@@ -1,0 +1,2 @@
+[console_scripts]
+saas-niche = saas_niche.main:main

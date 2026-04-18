@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: saasniche
+Version: 0.1.0
+Summary: SaaS idea discovery toolkit
+Requires-Dist: httpx
+Requires-Dist: anthropic
+Requires-Dist: supabase
+Requires-Dist: sentence-transformers
+Requires-Dist: hdbscan
+Requires-Dist: scikit-learn
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+Requires-Dist: pydantic-settings
+Requires-Dist: python-dotenv
+Dynamic: requires-dist
+Dynamic: summary
