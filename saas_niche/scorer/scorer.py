@@ -55,9 +55,9 @@ def _compute_score(
 
     score = (
         wtp_score * 0.45
-        + intensity_score * 0.30
-        + frequency_score * 0.15
-        + upvote_score * 0.10
+        + intensity_score * 0.20
+        + upvote_score * 0.25
+        + frequency_score * 0.05
     ) * 100
     if wtp_signal == "none":
         score = min(score, 40.0)

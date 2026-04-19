@@ -6,6 +6,9 @@
 # alter table raw_posts
 # add column if not exists classified boolean default false;
 #
+# alter table raw_posts
+# add column if not exists created_at timestamptz default now();
+#
 # create table if not exists scored_posts (
 #   id          text primary key,
 #   subreddit   text,

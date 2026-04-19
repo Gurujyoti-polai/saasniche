@@ -10,7 +10,7 @@ import { TopIdeasCarousel } from "./components/TopIdeasCarousel";
 import { API_BASE_URL, fetchAllIdeas, fetchIdeaDetail, fetchStats, fetchTopIdeas } from "./lib/api";
 import type { IdeaDetail, IdeaSummary, StatsResponse } from "./types";
 
-const IDEAS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 50;
 const DEFAULT_TOTAL_IDEAS = 287;
 
 type SortOption = "score_desc" | "score_asc" | "newest";
@@ -203,7 +203,7 @@ function DashboardPage() {
   const [profession, setProfession] = useState("all");
   const [minScore, setMinScore] = useState(25);
   const [sort, setSort] = useState<SortOption>("score_desc");
-  const [page, setPage] = useState(1);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [selectedIdea, setSelectedIdea] = useState<IdeaSummary | null>(null);
   const [ideaDetail, setIdeaDetail] = useState<IdeaDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -240,7 +240,7 @@ function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    setPage(1);
+    setVisibleCount(ITEMS_PER_PAGE);
   }, [debouncedQuery, category, profession, minScore, sort]);
 
   useEffect(() => {
@@ -292,12 +292,8 @@ function DashboardPage() {
     sort,
   );
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / IDEAS_PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const pagedIdeas = filtered.slice(
-    (currentPage - 1) * IDEAS_PER_PAGE,
-    currentPage * IDEAS_PER_PAGE,
-  );
+  const visibleIdeas = filtered.slice(0, visibleCount);
+  const canLoadMore = visibleCount < filtered.length;
 
   function handleQueryChange(event: ChangeEvent<HTMLInputElement>) {
     setQuery(event.target.value);
@@ -386,41 +382,33 @@ function DashboardPage() {
                   Searchable dashboard
                 </p>
                 <p className="mt-2 text-base text-slate-200">
-                  Showing {pagedIdeas.length} of {filtered.length} ideas.
+                  Showing {visibleIdeas.length} of {filtered.length} ideas.
                 </p>
               </div>
               <div className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-200">
-                {currentPage} of {totalPages}
+                50 per batch
               </div>
             </div>
 
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {pagedIdeas.map((idea) => (
+              {visibleIdeas.map((idea) => (
                 <IdeaCard key={idea.id} idea={idea} onView={openIdea} />
               ))}
             </div>
 
-            <div className="mt-10 flex items-center justify-between gap-4">
-              <button
-                className="rounded-full border border-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40"
-                disabled={currentPage === 1}
-                onClick={() => setPage((value) => Math.max(1, value - 1))}
-                type="button"
-              >
-                Prev
-              </button>
-              <span className="text-sm text-muted">
-                {currentPage} of {totalPages}
-              </span>
-              <button
-                className="rounded-full bg-white px-5 py-3 text-sm font-bold text-ink transition hover:bg-accent hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-                disabled={currentPage === totalPages}
-                onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-                type="button"
-              >
-                Next
-              </button>
-            </div>
+            {canLoadMore ? (
+              <div className="mt-10 flex items-center justify-center">
+                <button
+                  className="rounded-full bg-white px-6 py-3 text-sm font-bold text-ink transition hover:bg-accent hover:text-white"
+                  onClick={() =>
+                    setVisibleCount((value) => Math.min(value + ITEMS_PER_PAGE, filtered.length))
+                  }
+                  type="button"
+                >
+                  Load More
+                </button>
+              </div>
+            ) : null}
           </>
         )}
       </main>

@@ -70,13 +70,18 @@ export function IdeaDetailModal({
               </div>
               <h2 className="text-3xl font-extrabold text-white">{idea.title}</h2>
               <a
-                className="text-sm text-accent transition hover:text-accentSoft"
+                className="text-blue-400 transition hover:underline"
                 href={idea.url}
                 rel="noreferrer"
                 target="_blank"
               >
-                Open Reddit thread
+                View on Reddit ↗
               </a>
+              {idea.created_at ? (
+                <p className="text-sm text-gray-400">
+                  Posted: {new Date(idea.created_at).toLocaleDateString()}
+                </p>
+              ) : null}
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">

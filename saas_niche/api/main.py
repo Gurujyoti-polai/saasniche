@@ -58,6 +58,9 @@ def _merge_idea(post: dict[str, Any], blueprint: dict[str, Any]) -> dict[str, An
         "title": post.get("title", ""),
         "subreddit": post.get("subreddit", ""),
         "url": post.get("url", ""),
+        "created_at": post.get("created_at")
+        or post.get("scored_at")
+        or post.get("fetched_at"),
         "score": post.get("score", 0),
         "category": post.get("category", ""),
         "profession": post.get("profession", ""),
@@ -92,6 +95,9 @@ def _load_joined_details() -> list[dict[str, Any]]:
             continue
 
         detail = dict(post)
+        detail["created_at"] = (
+            post.get("created_at") or post.get("scored_at") or post.get("fetched_at")
+        )
         detail["blueprint"] = blueprint
         details.append(detail)
 

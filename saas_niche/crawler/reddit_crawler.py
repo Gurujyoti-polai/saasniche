@@ -24,6 +24,7 @@ REQUEST_TIMEOUT = 15.0
 SUBREDDIT_SLEEP_SECONDS = 5
 RETRY_SLEEP_SECONDS = 60
 POST_LIMIT = 25
+HOT_POST_LIMIT = 50
 BODY_MAX_CHARS = 800
 MIN_CONTENT_CHARS = 30
 CLASSIFIER_COST_PER_POST = 0.0001
@@ -119,8 +120,7 @@ def _normalize_post(post: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _fetch_new_posts(client: httpx.Client, subreddit: str) -> dict[str, Any] | None:
-    url = f"{BASE_URL}/r/{subreddit}/new.json?limit={POST_LIMIT}&raw_json=1"
+def _fetch_listing(client: httpx.Client, subreddit: str, url: str) -> dict[str, Any] | None:
 
     for attempt in range(2):
         try:
@@ -146,22 +146,27 @@ def _crawl_subreddit(
     subreddit: str,
     seen_ids: set[str],
 ) -> tuple[list[dict[str, Any]], int]:
-    payload = _fetch_new_posts(client, subreddit)
-    if not isinstance(payload, dict):
-        return [], 0
-
-    children = payload.get("data", {}).get("children", [])
     saved: list[dict[str, Any]] = []
     skipped = 0
+    endpoints = [
+        f"{BASE_URL}/r/{subreddit}/hot.json?limit={HOT_POST_LIMIT}&raw_json=1",
+        f"{BASE_URL}/r/{subreddit}/new.json?limit={POST_LIMIT}&raw_json=1",
+    ]
 
-    for child in children:
-        post = child.get("data", {})
-        if not _is_valid_post(post, seen_ids):
-            skipped += 1
+    for url in endpoints:
+        payload = _fetch_listing(client, subreddit, url)
+        if not isinstance(payload, dict):
             continue
 
-        saved.append(_normalize_post(post))
-        seen_ids.add(post["id"])
+        children = payload.get("data", {}).get("children", [])
+        for child in children:
+            post = child.get("data", {})
+            if not _is_valid_post(post, seen_ids):
+                skipped += 1
+                continue
+
+            saved.append(_normalize_post(post))
+            seen_ids.add(post["id"])
 
     return saved, skipped
 

@@ -12,6 +12,8 @@ export type CompetitionLevel = "low" | "medium" | "high";
 export type Blueprint = {
   id?: string;
   title?: string;
+  created_at?: string;
+  generated_at?: string;
   target_audience: string;
   problem_summary: string;
   solution: string;
@@ -29,6 +31,7 @@ export type IdeaSummary = {
   title: string;
   subreddit: string;
   url: string;
+  created_at?: string;
   score: number;
   category: string;
   profession: string;
